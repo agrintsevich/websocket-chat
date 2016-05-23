@@ -8,4 +8,5 @@ object DefaultDocFields {
   val createdBy = "createdBy"
   val name = "name"
   val user = "user"
+  val default = ""
 }

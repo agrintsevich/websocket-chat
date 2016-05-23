@@ -14,6 +14,10 @@ trait StorageComponent {
 
     def joinTopic(user: User, topic: Topic)
 
+    def getTopicByName(topic: String): Topic
+
     def leaveTopic(user: User, topic: Topic)
+
+    def getOldMessages(topic: Topic): Seq[Message]
   }
 }

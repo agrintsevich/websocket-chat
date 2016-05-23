@@ -37,7 +37,11 @@ class Chat extends Actor {
     case msg: ClientSentMessage => {
 
       domainService.getMsgType(msg.text) match {
-        case MessageType.userJoinedChat =>  storage.joinTopic(domainService.createUser(msg.text), domainService.createTopic(msg.text))
+        case MessageType.userJoinedChat =>  {
+          val topic = domainService.createTopic(msg.text)
+          storage.addTopic(topic)
+          storage.joinTopic(domainService.createUser(msg.text), topic)
+        }
         case MessageType.message => storage.addMessage(domainService.createMessage(msg.text))
         case MessageType.topic => storage.addTopic(domainService.createTopic(msg.text))
         case MessageType.userLeftChat => storage.leaveTopic(domainService.createUser(msg.text), domainService.createTopic(msg.text))
