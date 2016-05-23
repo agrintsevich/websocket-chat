@@ -1,8 +1,6 @@
 package domain
 
-package object constants {
-  val userJoinedChat =  "userJoinedChat"
-  val message =  "message"
-  val topic =  "topic"
-  val userLeftChat =  "userLeftChat"
+object MessageType extends Enumeration {
+  type MessageType = Value
+  val userJoinedChat, message, topic, userLeftChat = Value
 }

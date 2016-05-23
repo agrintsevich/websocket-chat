@@ -2,8 +2,8 @@ package domain
 
 import java.util.Date
 
+import domain.MessageType.MessageType
 import play.api.libs.json.JsValue
-import constants._
 
 class DomainService {
 
@@ -11,13 +11,22 @@ class DomainService {
 
   def createUser(name: String) = new User(name, null)
 
+  def createUser(data: JsValue) = {
+    val username =  (data \ "username").get.toString.replace("\"","")
+    new User(username, null)
+  }
+
+  def getMsgType(data: JsValue): MessageType.Value = {
+    MessageType.withName((data \ "type").get.toString.replace("\"",""))
+
+  }
+
   def createMessage(text: String, date: Date, user: User, topic: Topic) = new Message(text,date,user, topic)
 
   def createMessage(data: JsValue): Message = {
     val username =  (data \ "username").get.toString.replace("\"","")
     val message = (data \ "data").get.toString.replace("\"","")
     val topicName = (data \ "topic").get.toString.replace("\"","")
-    val msgType = (data \ "type")
 
     val user = createUser(username)
     val topic = createTopic(topicName, user, new Date())
@@ -25,6 +34,13 @@ class DomainService {
     new Message(message, new Date(), user, topic)
   }
 
-  def createTopic(name: String, user: User,date: Date) = new Topic(name, user, date)
+  def createTopic(name: String, user: User,date: Date): Topic = new Topic(name, user, date)
+
+  def createTopic(data: JsValue): Topic = {
+    val username =  (data \ "username").get.toString.replace("\"","")
+    val topicName = (data \ "topic").get.toString.replace("\"","")
+    val user = createUser(username)
+    createTopic(topicName, user, new Date())
+  }
 
 }

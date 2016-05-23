@@ -2,7 +2,7 @@ package storage
 
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.commons.Logging
-import constants.DefaultDocFields._
+import storage.constants.DefaultDocFields._
 import domain.{Message, User, Topic}
 
 trait StorageComponentImpl extends StorageComponent with Logging{
@@ -13,11 +13,9 @@ trait StorageComponentImpl extends StorageComponent with Logging{
       val builder = MongoDBObject.newBuilder
       builder += (
         username -> user.name,
-        topic -> user.topics
+        topicName -> user.topics
         )
       context.usersCollection += builder.result()
-
-      println("USERS: "+context.usersCollection.find().next())
     }
 
     def addMessage(message: Message) = {
@@ -25,26 +23,46 @@ trait StorageComponentImpl extends StorageComponent with Logging{
       builder += (
         text -> message.text,
         dateCreated -> message.date,
-        topic -> message.topic,
+        topicName -> message.topic,
         user -> message.user
         )
       context.messagesCollection += builder.result()
 
-      val itr = context.messagesCollection.find()
+      print()
+    }
 
-      println("-------------------------------------")
-      while (itr.hasNext)
-        println("Msg: "+itr.next())
-
+    def leaveTopic(user: User, topic: Topic) = {
 
     }
 
+    def joinTopic(user: User, topic: Topic) = {
 
-    def leaveTopic(user: User, topic: Topic) = ???
+    }
 
-    def joinTopic(user: User, topic: Topic) = ???
+    def addTopic(topic: Topic) = {
+      val builder = MongoDBObject.newBuilder
+      builder += (
+        topicName -> topic.name,
+        createdBy -> topic.createdBy,
+        dateCreated -> topic.dateCreated
+        )
+      context.topicsCollection += builder.result()
+    }
 
-    def addTopic(topic: Topic) = ???
+    def getOldMessages(topic: Topic)= {
+
+    }
+
+    def print() = {
+      val itr = context.topicsCollection.find()
+      while (itr.hasNext)
+        println(itr.next())
+
+      val itr1 = context.messagesCollection.find()
+      while (itr1.hasNext)
+        println(itr1.next())
+    }
+
   }
 
 }

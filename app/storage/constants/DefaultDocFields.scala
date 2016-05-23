@@ -2,7 +2,7 @@ package storage.constants
 
 object DefaultDocFields {
   val username = "username"
-  val topic = "topic"
+  val topicName = "topic"
   val text = "text" //message text
   val dateCreated = "dateCreated"
   val createdBy = "createdBy"
