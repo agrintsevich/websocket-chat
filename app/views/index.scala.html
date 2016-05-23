@@ -18,7 +18,10 @@
     <div ng-controller="ChatController as chat" ng-init="username = '@{user}'; topic = '@{topic}'">
             <div class="header">
                 <div>
-                    <div class="topicNameDiv" ng-show="'@{topic}'">Topic: @topic</div>
+                    <div class="topicNameDiv" ng-show="'@{topic}'">Topic: @topic
+                        <a ng-show="'@{topic}'" ng-click="chat.leave()">Leave</a>
+                    </div>
+
                      Logged in as @user —
                      <a href="@routes.Application.index()" ng-click="chat.disconnect()">Disconnect</a>
                 </div>

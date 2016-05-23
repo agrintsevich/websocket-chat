@@ -120,11 +120,14 @@ angular.module("ChatApp", [])
     };
 
     chat.disconnect = function() {
-        var msg = {"type": messages.userLeftChat,"username": chat.username, "topic": chat.topic, "id": $scope.guid()}
+        var msg = {"type": messages.disconnected,"username": chat.username, "topic": chat.topic, "id": $scope.guid()}
         $scope.ws.send(JSON.stringify(msg));
     }
 
-
+    chat.leave = function() {
+        var msg = {"type": messages.userLeftChat,"username": chat.username, "topic": chat.topic, "id": $scope.guid()}
+        $scope.ws.send(JSON.stringify(msg));
+    }
 
     this.goToTopic = function(topic) {
         $window.location.href = 'http://localhost:9000/joinChat?username='+chat.username+'&topic='+topic;

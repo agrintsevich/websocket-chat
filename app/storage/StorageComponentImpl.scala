@@ -32,12 +32,19 @@ trait StorageComponentImpl extends StorageComponent with Logging {
         user -> message.user
         )
       context.messagesCollection += builder.result()
-
-      print()
     }
 
     def leaveTopic(user: User, topic: Topic) = {
 
+      val userDbObj = getUserDbObject(user.name)
+      userDbObj match {
+        case Some(foundUser) => {
+          val newTopics = user.topics
+          if (newTopics != null)
+            foundUser.update(topics, newTopics.filterNot(_ equals(topic)))
+        }
+        case None => {}
+      }
     }
 
     def joinTopic(user: User, topic: Topic) = {
@@ -53,14 +60,44 @@ trait StorageComponentImpl extends StorageComponent with Logging {
 
     def getOldMessages(topic: Topic): Seq[Message] = {
       val filter = MongoDBObject(topicName -> topic.name)
-
       val messages = getMesages(filter)
-
-      println("FOUND MESSAGES: " + messages)
 
       for {
         message <- messages
       } yield constractDomainMsq(message)
+    }
+
+    private def updateUser(old: User, newUser: User) = {
+
+    }
+
+    private def getUserDbObject(name: String): Option[DBObject] = {
+      val userItr = context.usersCollection.find(MongoDBObject(username -> name))
+      if (userItr.hasNext) {
+        val user = userItr.next
+        Some(user)
+      }
+      None
+    }
+
+    private def getUserByName(name: String): Option[User] = {
+      val userItr = context.usersCollection.find(MongoDBObject(username -> name))
+      if (userItr.hasNext) {
+        val user = userItr.next
+        Some(userToDomain(user))
+      }
+      None
+    }
+
+    private def userToDomain(user: MongoDBObject): User = {
+      val name = user.getAs[String](username).get
+      val topicsSeq = user.getAs[MongoDBList](topics).get
+      val userTopics =
+        for {
+          topic_ <- topicsSeq
+        } yield domainService.createTopic(String.valueOf(topic_))
+
+      new User(name, userTopics)
     }
 
     private def topicToDbObject(topic: Topic): MongoDBObject = {

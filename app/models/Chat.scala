@@ -45,6 +45,7 @@ class Chat extends Actor {
         case MessageType.message => storage.addMessage(domainService.createMessage(msg.text))
         case MessageType.topic => storage.addTopic(domainService.createTopic(msg.text))
         case MessageType.userLeftChat => storage.leaveTopic(domainService.createUser(msg.text), domainService.createTopic(msg.text))
+        case MessageType.disconnected => {}
       }
 
       (subscribers - sender).foreach {
