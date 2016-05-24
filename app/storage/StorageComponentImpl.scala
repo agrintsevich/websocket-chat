@@ -15,12 +15,18 @@ trait StorageComponentImpl extends StorageComponent with Logging {
     val domainService = new DomainService
 
     def addUser(user: User) = {
-      val builder = MongoDBObject.newBuilder
-      builder +=(
-        username -> user.name,
-        topicName -> user.topics
-        )
-      context.usersCollection += builder.result()
+      if (!getUserByName(user.name).isDefined) {
+        val userTopics = for {
+          t <- user.topics
+        } yield (topicToDbObject(t))
+
+        val builder = MongoDBObject.newBuilder
+        builder +=(
+          username -> user.name,
+          topics -> user.topics
+          )
+        context.usersCollection += builder.result()
+      }
     }
 
     def addMessage(message: Message) = {
@@ -40,8 +46,7 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       userDbObj match {
         case Some(foundUser) => {
           val newTopics = user.topics
-          if (newTopics != null)
-            foundUser.update(topics, newTopics.filterNot(_ equals (topic)))
+          foundUser.update(topics, newTopics.filterNot(_ equals (topic)))
         }
         case None => {}
       }
@@ -52,8 +57,8 @@ trait StorageComponentImpl extends StorageComponent with Logging {
 
       dbUser match {
         case Some(userVal) => {
-          val existingTopics = if (user.topics != null) user.topics else Seq.empty[Topic]
-          userVal.update(topics, existingTopics :+ topic)
+          val existingTopics = user.topics
+          userVal.update(topics, existingTopics :+ topicToDbObject(topic))
         }
         case None => {}
       }
@@ -69,11 +74,16 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       topicsSeq.toSeq ++ user.topics
     }
 
-    def addTopic(topic: Topic) = context.topicsCollection += topicToDbObject(topic)
+    def addTopic(topic: Topic) = {
+      if (!getTopic(MongoDBObject(topicName -> topic.name)).isDefined)
+        context.topicsCollection += topicToDbObject(topic)
+    }
 
-    def getTopicByName(topic: String): Topic = {
+    def getTopicByName(topic: String):Option[Topic] = {
       val filter = MongoDBObject(topicName -> topic)
-      topicToDomain(getTopic(filter))
+      if (getTopic(filter).isDefined)
+        return Some(topicToDomain(getTopic(filter).get))
+      None
     }
 
     def getOldMessages(topic: Topic): Seq[Message] = {
@@ -85,20 +95,7 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       } yield constractDomainMsq(message)
     }
 
-    private def updateUser(old: User, newUser: User) = {
-
-    }
-
-    private def getUserDbObject(name: String): Option[DBObject] = {
-      val userItr = context.usersCollection.find(MongoDBObject(username -> name))
-      if (userItr.hasNext) {
-        val user = userItr.next
-        return Some(user)
-      }
-      None
-    }
-
-    private def getUserByName(name: String): Option[User] = {
+    def getUserByName(name: String): Option[User] = {
       val userItr = context.usersCollection.find(MongoDBObject(username -> name))
       if (userItr.hasNext) {
         val user = userItr.next
@@ -107,9 +104,23 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       None
     }
 
+    private def updateUser(old: User, newUser: User) = {
+
+    }
+
+    private def getUserDbObject(name: String): Option[DBObject] = {
+      val userItr = context.usersCollection.find(MongoDBObject(username -> name))
+      if (userItr.hasNext) {
+        println ("COUNT OF USERS WITH NAME "+name+" - "+userItr.size)
+        val user = userItr.next
+        return Some(user)
+      }
+      None
+    }
+
     private def userToDomain(user: MongoDBObject): User = {
       val name = user.getAs[String](username).get
-      val topicsSeq = user.getAs[MongoDBList](topics).get
+      val topicsSeq = user.getAs[MongoDBList](topics).getOrElse(Seq.empty[Topic])
       val userTopics =
         for {
           topic_ <- topicsSeq
@@ -130,12 +141,12 @@ trait StorageComponentImpl extends StorageComponent with Logging {
 
     private def getMesages(filter: MongoDBObject) = context.messagesCollection.find(filter).toSeq
 
-    private def getTopic(filter: MongoDBObject): DBObject = getTopics(filter) match {
-      case Seq(el, _) => el
-      case _ => null
+    private def getTopic(filter: MongoDBObject): Option[DBObject] = getTopics(filter) match {
+      case Seq(el, _) => Some(el)
+      case _ => None
     }
 
-    private def getTopics(filter: MongoDBObject): Seq[DBObject] = context.topicsCollection.find().toSeq
+    private def getTopics(filter: MongoDBObject): Seq[DBObject] = context.topicsCollection.find(filter).toSeq
 
     private def topicToDomain(topic: DBObject): Topic = {
       val name = topic.getAs[String](topicName).getOrElse(default)
@@ -151,6 +162,7 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       val userName = message.getAs[String](user).getOrElse(default)
       new Message(messageText, date, domainService.createUser(username), getTopicByName(topic))
     }
+
 
   }
 

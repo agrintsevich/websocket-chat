@@ -4,16 +4,13 @@ import akka.actor._
 
 import Messages._
 import domain.MessageType._
-import storage.{MongoConfig, MongoContext, StorageComponentImpl}
+import storage.{StorageService, MongoConfig, MongoContext, StorageComponentImpl}
 import domain.{DomainService}
 import domain.MessageType
 
 class Chat extends Actor {
-  implicit val mongoContext = new MongoContext(new MongoConfig())
 
-  val storage = new StorageComponentImpl {
-    override val storage: Storage = new StorageImpl
-  }.storage
+  val storage = StorageService.getStorage
 
   val domainService = new DomainService
 
@@ -37,7 +34,7 @@ class Chat extends Actor {
     case msg: ClientSentMessage => {
 
       domainService.getMsgType(msg.text) match {
-        case MessageType.userJoinedChat =>  {
+        case MessageType.userJoinedChat => {
           val topic = domainService.createTopic(msg.text)
           val user = domainService.createUser(msg.text)
           storage.addUser(user)
@@ -45,9 +42,11 @@ class Chat extends Actor {
         }
         case MessageType.message => storage.addMessage(domainService.createMessage(msg.text))
         case MessageType.topic => {
+          println("msg text: "+msg.text)
+
           val user = domainService.createUser(msg.text)
           val topic = domainService.createTopic(msg.text)
-          storage.addTopic(domainService.createTopic(msg.text))
+          storage.addTopic(topic)
           storage.joinTopic(user, topic)
         }
         case MessageType.userLeftChat => storage.leaveTopic(domainService.createUser(msg.text), domainService.createTopic(msg.text))

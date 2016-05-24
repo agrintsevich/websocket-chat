@@ -9,6 +9,8 @@ import play.api.Play.current
 
 import models._
 import models.Messages._
+import storage.{StorageService, StorageComponentImpl}
+import domain.{User, DomainService}
 
 
 @Singleton
@@ -16,10 +18,13 @@ class Application @Inject()(actorSystem: ActorSystem) extends Controller {
 
   val chat = actorSystem.actorOf(Props[Chat], "chat")
 
+  val domainService = new DomainService
+  val storage = StorageService.getStorage
+
   def socket(topic: String) = WebSocket.acceptWithActor[JsValue, JsValue] {
     (request: RequestHeader) =>
-    (out: ActorRef) =>
-    Props(new Client(out, chat, topic))
+      (out: ActorRef) =>
+        Props(new Client(out, chat, topic))
   }
 
   def joinChat(username: String, topic: String) = Action { implicit request =>
@@ -28,7 +33,16 @@ class Application @Inject()(actorSystem: ActorSystem) extends Controller {
         "error" -> "Please choose a valid username."
       )
     } else {
-      Ok(views.html.index(username, topic))
+      val user = storage.getUserByName(username) match {
+        case Some(user) => user
+        case None => {
+          storage.addUser(domainService.createUser(username))
+          storage.getUserByName(username).get
+        }
+      }
+      val topics = storage.getTopicsOfUser(user).toList
+
+      Ok(views.html.index(username, topic, topics))
     }
   }
 
@@ -44,6 +58,6 @@ class Application @Inject()(actorSystem: ActorSystem) extends Controller {
   }
 
   def index = Action {
-    Ok(views.html.index(null, ""))
+    Ok(views.html.index(null, "", Seq.empty[domain.Topic]))
   }
 }
