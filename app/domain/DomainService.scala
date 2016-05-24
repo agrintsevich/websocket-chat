@@ -34,7 +34,6 @@ class DomainService {
   def createTopic(name: String): Topic = new Topic(name, null, new Date)
 
   def createTopic(data: JsValue): Topic = {
-    println("DATA COMING INTO TOPIC: " + data)
 
     val username = (data \ "username").get.toString.replace("\"", "")
     val user = createUser(username)
