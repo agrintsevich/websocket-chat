@@ -111,7 +111,6 @@ trait StorageComponentImpl extends StorageComponent with Logging {
     private def getUserDbObject(name: String): Option[DBObject] = {
       val userItr = context.usersCollection.find(MongoDBObject(username -> name))
       if (userItr.hasNext) {
-        println ("COUNT OF USERS WITH NAME "+name+" - "+userItr.size)
         val user = userItr.next
         return Some(user)
       }

@@ -42,7 +42,6 @@ class Chat extends Actor {
         }
         case MessageType.message => storage.addMessage(domainService.createMessage(msg.text))
         case MessageType.topic => {
-          println("msg text: "+msg.text)
 
           val user = domainService.createUser(msg.text)
           val topic = domainService.createTopic(msg.text)
