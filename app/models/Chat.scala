@@ -21,6 +21,7 @@ class Chat extends Actor {
       subscribers.foreach {
         _ ! ClientJoinedChat(sender)
       }
+
       context become process(subscribers + sender)
     }
 
@@ -61,10 +62,6 @@ class Chat extends Actor {
     }
 
     case topic: ClientCreatedTopic =>
-      (subscribers).foreach {
-        _ ! topic
-      }
-
-
+      (subscribers).foreach( _ ! topic)
   }
 }

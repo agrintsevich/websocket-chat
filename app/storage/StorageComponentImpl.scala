@@ -106,7 +106,7 @@ trait StorageComponentImpl extends StorageComponent with Logging {
 
       for {
         message <- messages
-      } yield constractDomainMsq(message)
+      } yield constructDomainMsq(message)
     }
 
     def getUserByName(name: String): Option[User] = {
@@ -135,14 +135,18 @@ trait StorageComponentImpl extends StorageComponent with Logging {
     }
 
     private def userToDomain(user: DBObject): User = {
-      val name = user.getAs[String](username).get
-      val topicsSeq = user.getAs[MongoDBList](topics).getOrElse(Seq.empty[Topic]).asInstanceOf[Seq[DBObject]]
-      val userTopics =
-        for {
-          topic_ <- topicsSeq
-        } yield topicToDomain((topic_))
+      if (!user.isEmpty) {
+        val name = user.getAs[String](username).get
+        val topicsSeq = user.getAs[MongoDBList](topics).getOrElse(Seq.empty[Topic]).asInstanceOf[Seq[DBObject]]
+        val userTopics =
+          for {
+            topic_ <- topicsSeq
+          } yield topicToDomain((topic_))
 
-      new User(name, userTopics)
+       return new User(name, userTopics)
+      } else {
+        new User("", Seq.empty[Topic])
+      }
     }
 
     private def topicToDbObject(topic: Topic): MongoDBObject = {
@@ -185,12 +189,12 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       new Topic(name, domainService.createUser(createdByUser), date)
     }
 
-    private def constractDomainMsq(message: Imports.DBObject): Message = {
+    private def constructDomainMsq(message: Imports.DBObject): Message = {
       val messageText = message.getAs[String](text).getOrElse(default)
       val date = message.getAs[Date](dateCreated).getOrElse(new Date)
       val topic = message.getAs[String](topicName).getOrElse(default)
-      val userName = message.getAs[String](user).getOrElse(default)
-      new Message(messageText, date, domainService.createUser(username), getTopicByName(topic))
+      val user = userToDomain(message.getAs[DBObject](username).getOrElse(DBObject.empty))
+      new Message(messageText, date, user, getTopicByName(topic))
     }
 
 

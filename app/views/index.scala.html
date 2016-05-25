@@ -1,4 +1,4 @@
-@(user: String, topic: String, topics: Seq[domain.Topic])
+@(user: String, topic: String, topics: Seq[domain.Topic], oldMessages: Seq[domain.Message])
 
     @currentTime = @{
         import java.util.Calendar
@@ -9,7 +9,6 @@
 
         curTimeFormat.format(today)
     }
-
 
     @main("Chat app") {
         <div ng-app="ChatApp" xmlns="http://www.w3.org/1999/html">
@@ -45,13 +44,12 @@
                     </div>
                     <div class="topicsDiv">
                         @for(t <- topics) {
-                            <li><topic text=@t.name></topic><a class="deleteTopic" ng-click="chat.deleteTopic('@t.name', $event)"> [delete] </a></li>
+                            <li><topic text=@t.name></topic> <a class="deleteTopic" ng-click="chat.deleteTopic('@t.name', $event)"> [delete] </a></li>
                         }
 
                         <ul id="topics" class="topics" ng-repeat="topic in chat.topics track by $index">
                             <li><topic text={{topic}}></topic><a class="deleteTopic"> [delete] </a></li>
                         </ul>
-
                     </div>
                     <div>
                         <h2>Participants</h2>
@@ -68,18 +66,19 @@
 
                 <div class="mainContainer">
                     <div class="container">
-
-                        <div class="Area" ng-repeat="msg in chat.messages track by $index">
-                            <div ng-attr-id="{{'first'+msg.id}}" ng-if="msg.username" class="{{msg.firstClass}} L">
-                                <a>
-                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrEyVlaWx0_FK_sz86j-CnUC_pfEqw_Xq_xZUm5CMIyEI_-X2hRUpx1BHL"/>
-                                    <div class="tooltip">{{msg.username}}</div>
-                                </a>
+                        <div class="Area">
+                            <div ng-repeat="msg in chat.messages track by $index">
+                                <div ng-attr-id="{{'first'+msg.id}}" ng-if="msg.username" class="{{msg.firstClass}} L">
+                                    <a>
+                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrEyVlaWx0_FK_sz86j-CnUC_pfEqw_Xq_xZUm5CMIyEI_-X2hRUpx1BHL"/>
+                                        <div class="tooltip">{{msg.username}}</div>
+                                    </a>
+                                </div>
+                                <div ng-attr-id="{{'second'+msg.id}}" class="text R textR" ng-if="msg.username">[@{
+                                    currentTime
+                                }] {{msg.data}}</div>
+                                <div ng-if="!msg.username" class="infoMessage">{{msg.data}}</div>
                             </div>
-                            <div ng-attr-id="{{'second'+msg.id}}" class="text R textR" ng-if="msg.username">[@{
-                                currentTime
-                            }] {{msg.data}}</div>
-                            <div ng-if="!msg.username" class="infoMessage">{{msg.data}}</div>
                         </div>
 
                     </div>

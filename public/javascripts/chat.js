@@ -114,6 +114,13 @@ angular.module("ChatApp", [])
         chat.topicParticipants = []
         chat.newTopic = "";
 
+        chat.putMessage = function(text, user, date) {
+            console.log(text+" "+user+" "+date)
+            var tMsg = {"username": user, "data": text, "date":date}
+           chat.messages.push(tMsg)
+
+        }
+
         chat.sendMessage = function () {
             var msg = {
                 "type": messages.message,
