@@ -176,7 +176,7 @@ angular.module("ChatApp", [])
                 $scope.getTopicName = function (data) {
                     var jsonTopic
                     try {
-                        jsonTopic= JSON.parse(data)
+                        jsonTopic = JSON.parse(data)
                     } catch (e) {
                         jsonTopic = data
                     }
@@ -187,26 +187,23 @@ angular.module("ChatApp", [])
                 }
             },
 
-            template: "<li class='topic'> {{getTopicName(getTopicName(text))}} <a class='subscribeTopic' name='subscribeTopic'>[subscribe]</a> <a class='deleteTopic' name=deleteTopic>[delete]</a> </li>",
+            template: "<span class='topic'> {{getTopicName(getTopicName(text))}} <a class='subscribeTopic' id='subscribeTopic'> [subscribe] </a></span>",
             link: function (scope, elem, attrs, ngCtrl) {
-
                 var topicName = scope.getTopicName(scope.text)
-
-                console.log(elem.children_)
-
-                elem.on('click', function () {
-                    elem.html("<li class='topicSubscripedLi'><a class='subscribedTopicHref'>" + topicName + "<a/></li>")
-
-                    //add participant to this topic
+                elem.on("click", function () {
+                    console.log("clicked!")
+                    elem.html("<span class='topicSubscripedLi'><a class='subscribedTopicHref'>" + topicName + "<a/></span>")
                     ngCtrl.subscribeTopics.push({"topic": scope.text})
 
                     elem.on('click', function () {
                         ngCtrl.goToTopic(topicName)
                     })
-                });
+                })
 
             }
         };
     });
+
+
 
 

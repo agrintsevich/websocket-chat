@@ -45,11 +45,11 @@
                     </div>
                     <div class="topicsDiv">
                         @for(t <- topics) {
-                            <topic text=@t.name></topic>
+                            <li><topic text=@t.name></topic><a class="deleteTopic"> [delete] </a></li>
                         }
 
                         <ul id="topics" class="topics" ng-repeat="topic in chat.topics track by $index">
-                            <topic text={{topic}}></topic>
+                            <li><topic text={{topic}}></topic><a class="deleteTopic"> [delete] </a></li>
                         </ul>
 
                     </div>
