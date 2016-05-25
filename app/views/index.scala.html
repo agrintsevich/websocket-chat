@@ -45,7 +45,7 @@
                     </div>
                     <div class="topicsDiv">
                         @for(t <- topics) {
-                            <li><topic text=@t.name></topic><a class="deleteTopic"> [delete] </a></li>
+                            <li><topic text=@t.name></topic><a class="deleteTopic" ng-click="chat.deleteTopic('@t.name', $event)"> [delete] </a></li>
                         }
 
                         <ul id="topics" class="topics" ng-repeat="topic in chat.topics track by $index">

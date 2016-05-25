@@ -3,5 +3,6 @@ var messages = {
     message: "message",
     topic: "topic",
     userLeftChat: "userLeftChat",
-    disconnected: "disconnected"
+    disconnected: "disconnected",
+    deleteTopic: "deleteTopic"
 }

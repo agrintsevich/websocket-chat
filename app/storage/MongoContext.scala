@@ -8,7 +8,7 @@ class MongoContext(val config: MongoConfig) {
   val mongoClient = MongoClient()
   val mongoDB = mongoClient(config.dbName)
 
-  implicit val options: DBObject = BasicDBObjectBuilder.start().add("capped", true).add("size", 2000000000l).get()
+  implicit val options: DBObject = BasicDBObjectBuilder.start().add("capped", false).add("size", 2000000000l).get()
 
   def messagesCollection = getOrCreate(config.messages)
 

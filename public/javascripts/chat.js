@@ -60,10 +60,8 @@ angular.module("ChatApp", [])
                             }
                             data["firstClass"] = classToAdd
                             chat.messages.push(data);
-                            console.log(data)
                             chat.topicParticipants.push(data.username)
                         }
-
                         break;
                     case messages.topic:
                         if (chat.topic == data.topic) {
@@ -78,7 +76,12 @@ angular.module("ChatApp", [])
                             chat.messages.push(tMsg)
                         }
                         break;
-
+                    case messages.deleteTopic:
+                        if (chat.topic == data.topic) {
+                            var topicName = JSON.stringify(data.data)
+                            chat.topics.splice(chat.topics.indexOf(topicName))
+                        }
+                        break
                 }
                 $scope.$apply();
                 $scope.$digest();
@@ -146,6 +149,21 @@ angular.module("ChatApp", [])
             $window.location.href = 'http://localhost:9000/joinChat?username=' + chat.username
         }
 
+        chat.deleteTopic = function (topicName, e) {
+            var elem = angular.element(e.srcElement);
+            var parentEl = angular.element(elem[0].parentNode)
+            parentEl.remove()
+            var msg = {
+                "type": messages.deleteTopic,
+                "username": chat.username,
+                "topic": chat.topic,
+                "data": topicName,
+                "id": $scope.guid()
+            }
+            $scope.ws.send(JSON.stringify(msg));
+
+        }
+
         this.goToTopic = function (topic) {
             $window.location.href = 'http://localhost:9000/joinChat?username=' + chat.username + '&topic=' + topic;
         }
@@ -191,7 +209,6 @@ angular.module("ChatApp", [])
             link: function (scope, elem, attrs, ngCtrl) {
                 var topicName = scope.getTopicName(scope.text)
                 elem.on("click", function () {
-                    console.log("clicked!")
                     elem.html("<span class='topicSubscripedLi'><a class='subscribedTopicHref'>" + topicName + "<a/></span>")
                     ngCtrl.subscribeTopics.push({"topic": scope.text})
 
