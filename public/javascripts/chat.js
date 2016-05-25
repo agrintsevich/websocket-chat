@@ -168,6 +168,18 @@ angular.module("ChatApp", [])
             $window.location.href = 'http://localhost:9000/joinChat?username=' + chat.username + '&topic=' + topic;
         }
 
+        this.subscribeToTopic = function (topic) {
+            var msg = {
+                "type": messages.topic,
+                "username": chat.username,
+                "topic": chat.topic,
+                "data": topic,
+                "id": $scope.guid()
+            }
+            if (typeof $scope.ws !== 'undefined')
+                $scope.ws.send(JSON.stringify(msg));
+        }
+
         chat.createTopic = function () {
 
             var topic = chat.newTopic.replace(/ /g, "\u00A0")
@@ -208,7 +220,9 @@ angular.module("ChatApp", [])
             template: "<span class='topic'> {{getTopicName(getTopicName(text))}} <a class='subscribeTopic' id='subscribeTopic'> [subscribe] </a></span>",
             link: function (scope, elem, attrs, ngCtrl) {
                 var topicName = scope.getTopicName(scope.text)
+
                 elem.on("click", function () {
+                    ngCtrl.subscribeToTopic(topicName)
                     elem.html("<span class='topicSubscripedLi'><a class='subscribedTopicHref'>" + topicName + "<a/></span>")
                     ngCtrl.subscribeTopics.push({"topic": scope.text})
 
