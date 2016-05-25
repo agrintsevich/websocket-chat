@@ -8,7 +8,6 @@ angular.module("ChatApp", [])
         var chat = this;
 
         chat.topic = ""
-        this.subscribeTopics = []
 
         $scope.$watch("username", function () {
             chat.username = $scope.username;
@@ -170,7 +169,7 @@ angular.module("ChatApp", [])
 
         this.subscribeToTopic = function (topic) {
             var msg = {
-                "type": messages.topic,
+                "type": messages.subscribeTopic,
                 "username": chat.username,
                 "topic": chat.topic,
                 "data": topic,
@@ -224,7 +223,6 @@ angular.module("ChatApp", [])
                 elem.on("click", function () {
                     ngCtrl.subscribeToTopic(topicName)
                     elem.html("<span class='topicSubscripedLi'><a class='subscribedTopicHref'>" + topicName + "<a/></span>")
-                    ngCtrl.subscribeTopics.push({"topic": scope.text})
 
                     elem.on('click', function () {
                         ngCtrl.goToTopic(topicName)
