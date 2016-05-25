@@ -33,13 +33,8 @@ class Application @Inject()(actorSystem: ActorSystem) extends Controller {
         "error" -> "Please choose a valid username."
       )
     } else {
-      val user = storage.getUserByName(username) match {
-        case Some(user) => user
-        case None => {
-          storage.addUser(domainService.createUser(username))
-          storage.getUserByName(username).get
-        }
-      }
+      storage.addUser(domainService.createUser(username))
+      val user = domainService.createUser(username)
       val topics = storage.getTopicsOfUser(user).toList
 
       Ok(views.html.index(username, topic, topics))

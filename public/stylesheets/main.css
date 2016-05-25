@@ -83,7 +83,6 @@ body
 }
 
 .topic {
-  color: #9F6905;
   font-family: tahoma;
   font-size: 18px;
   font-weight:lighter;
@@ -370,7 +369,15 @@ textarea:focus
 }
 .loginDiv form div img {
   max-height: 60px;
+}
+.subscribeTopic {
+  font-size: 16px;
+  color: darkgreen;
+}
 
+.deleteTopic {
+  font-size: 16px;
+  color: darkred;
 }
 
 

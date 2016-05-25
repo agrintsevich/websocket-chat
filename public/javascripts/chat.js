@@ -186,10 +186,12 @@ angular.module("ChatApp", [])
                 }
             },
 
-            template: "<li class='topic'> {{getTopicName(getTopicName(text))}} <a>subscribe</a> </li>",
+            template: "<li class='topic'> {{getTopicName(getTopicName(text))}} <a class='subscribeTopic' name='subscribeTopic'>[subscribe]</a> <a class='deleteTopic' name=deleteTopic>[delete]</a> </li>",
             link: function (scope, elem, attrs, ngCtrl) {
 
                 var topicName = scope.getTopicName(scope.text)
+
+                console.log(document.getElementsByName('subscribeTopic'))
 
                 elem.on('click', function () {
                     elem.html("<li class='topicSubscripedLi'><a class='subscribedTopicHref'>" + topicName + "<a/></li>")

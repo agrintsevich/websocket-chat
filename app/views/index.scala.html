@@ -24,10 +24,10 @@
                     <div>
                         <div class="topicNameDiv" ng-show="'@{
                             topic
-                        }'">Topic: @topic
+                        }'">Current topic: @topic
                             <a ng-show="'@{
                                 topic
-                            }'" ng-click="chat.leave()">Leave</a>
+                            }'" ng-click="chat.leave()">[Leave]</a>
                         </div>
 
                         Logged in as @user —
@@ -36,7 +36,7 @@
                 </div>
                 <div class="topicsContainer">
                     <div class="topicForm">
-                        <h2>Topics</h2>
+                        <h2>Available topics:</h2>
                         <form id="topicform" >
                             <input id="topicName" ng-model="chat.newTopic" type="text" class="form-control " placeholder="Enter topic...">
 
