@@ -143,6 +143,7 @@ angular.module("ChatApp", [])
                 "id": $scope.guid()
             }
             $scope.ws.send(JSON.stringify(msg));
+            $window.location.href = 'http://localhost:9000/joinChat?username=' + chat.username
         }
 
         this.goToTopic = function (topic) {
@@ -191,7 +192,7 @@ angular.module("ChatApp", [])
 
                 var topicName = scope.getTopicName(scope.text)
 
-                console.log(document.getElementsByName('subscribeTopic'))
+                console.log(elem.children_)
 
                 elem.on('click', function () {
                     elem.html("<li class='topicSubscripedLi'><a class='subscribedTopicHref'>" + topicName + "<a/></li>")

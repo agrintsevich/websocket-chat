@@ -2,7 +2,6 @@ package domain
 
 import java.util.Date
 
-import domain.MessageType.MessageType
 import play.api.libs.json.JsValue
 
 class DomainService {
@@ -40,9 +39,9 @@ class DomainService {
 
     val topicName = if ((data \ "data").toOption.isDefined) {
       (data \ "data").get.toString.replace("\"", "")
-    } else {
+    } else if ((data \ "topic").toOption.isDefined){
       (data \ "topic").get.toString.replace("\"", "")
-    }
+    } else ""
     createTopic(topicName, user, new Date())
   }
 

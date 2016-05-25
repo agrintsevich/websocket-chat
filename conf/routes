@@ -1,7 +1,7 @@
 
 GET     /                           controllers.Application.index
 GET     /socket/:topic              controllers.Application.socket(topic: String)
-GET     /joinChat                   controllers.Application.joinChat(username: String ?= null, topic: String ?= "")
+GET     /joinChat                   controllers.Application.joinChat(username: String ?= null, topic: String ?= "Conversation")
 GET     /createTopic                controllers.Application.createTopic(topic: String ?= null)
 
 # Map static resources from the /public folder to the /assets URL path

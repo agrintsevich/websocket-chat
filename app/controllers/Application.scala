@@ -53,6 +53,6 @@ class Application @Inject()(actorSystem: ActorSystem) extends Controller {
   }
 
   def index = Action {
-    Ok(views.html.index(null, "", Seq.empty[domain.Topic]))
+    Ok(views.html.index(null, "Conversation", Seq.empty[domain.Topic]))
   }
 }
