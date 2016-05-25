@@ -36,7 +36,14 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       val userDbObj = getUserDbObject(user.name)
       userDbObj match {
         case Some(foundUser) => {
+          val userTopics = userToDomain(foundUser).topics
+          val newTopics = userTopics.filterNot(_.name.equals(topic.name))
+          val transformedToDbTopics = for {
+            t <- newTopics
+          }yield (topicToDbObject(t))
+
           context.topicsCollection.findAndRemove(MongoDBObject(topicName -> topic.name))
+          context.usersCollection.update(MongoDBObject(username -> user.name), $set (topics->transformedToDbTopics))
         }
         case None => {}
       }
@@ -46,14 +53,20 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       val dbUser = getUserDbObject(user.name)
       dbUser match {
         case Some(foundUser) => {
+          val existingTopics = userToDomain(foundUser).topics
+          existingTopics.find(_.name.equals(topic.name)) match {
+            case Some(_) => {
+            }
+            case None => {
+              val newTopics = (existingTopics ++ List(topic))
+              val transformedToDbTopics = for {
+                t <- newTopics
+              }yield (topicToDbObject(t))
 
-          println("FOUND USER: "+foundUser)
+              context.usersCollection.update(MongoDBObject(username->user.name), $set (topics->transformedToDbTopics))
+            }
+           }
 
-          val existingTopics = user.topics
-          val newTopics = existingTopics :+ topic
-          context.usersCollection.update(MongoDBObject(topics -> newTopics), foundUser)
-
-          println("UPDATED USER: "+getUserDbObject(user.name))
         }
         case None => {}
       }
@@ -75,8 +88,9 @@ trait StorageComponentImpl extends StorageComponent with Logging {
     }
 
     def addTopic(topic: Topic) = {
-      if (!getTopic(MongoDBObject(topicName -> topic.name)).isDefined)
+      if (!getTopic(MongoDBObject(topicName -> topic.name)).isDefined) {
         context.topicsCollection += topicToDbObject(topic)
+      }
     }
 
     def getTopicByName(topic: String): Option[Topic] = {
