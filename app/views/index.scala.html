@@ -1,115 +1,114 @@
 @(user: String, topic: String, topics: Seq[domain.Topic], oldMessages: Seq[domain.Message])
 
-    @currentTime = @{
-        import java.util.Calendar
-        import java.text.SimpleDateFormat
+@currentTime = @{
+    import java.util.Calendar
+    import java.text.SimpleDateFormat
 
-        val today = Calendar.getInstance.getTime
-        val curTimeFormat = new SimpleDateFormat("HH:mm:ss")
+    val today = Calendar.getInstance.getTime
+    val curTimeFormat = new SimpleDateFormat("HH:mm:ss")
 
-        curTimeFormat.format(today)
-    }
+    curTimeFormat.format(today)
+}
 
-    @main("Chat app") {
-        <div ng-app="ChatApp" xmlns="http://www.w3.org/1999/html">
-        @if(user != null) {
+@main("Chat app") {
+    <div ng-app="ChatApp" xmlns="http://www.w3.org/1999/html">
+    @if(user != null) {
 
-            <div ng-controller="ChatController as chat" ng-init="username = '@{
-                user
-            }'; topic = '@{
-                topic
-            }'">
-                <div class="header">
-                    <div>
-                        <div class="topicNameDiv" ng-show="'@{
+        <div ng-controller="ChatController as chat" ng-init="username = '@{
+            user
+        }'; topic = '@{
+            topic
+        }'">
+            <div class="header">
+                <div>
+                    <div class="topicNameDiv" ng-show="'@{
+                        topic
+                    }'">Current topic: @topic
+                        <a ng-show="'@{
                             topic
-                        }'">Current topic: @topic
-                            <a ng-show="'@{
-                                topic
-                            }'" ng-click="chat.leave()">[Leave]</a>
-                        </div>
+                        }'" ng-click="chat.leave()">[Leave]</a>
+                    </div>
 
-                        Logged in as @user —
-                        <a href="@routes.Application.index()" ng-click="chat.disconnect()">Disconnect</a>
-                    </div>
-                </div>
-                <div class="topicsContainer">
-                    <div class="topicForm">
-                        <h2>Available topics:</h2>
-                        <form id="topicform" >
-                            <input id="topicName" ng-model="chat.newTopic" type="text" class="form-control " placeholder="Enter topic...">
-
-                            <input id="createTopicButton" type="submit" value="Create" ng-click="chat.createTopic()"/>
-                        </form>
-                    </div>
-                    <div class="topicsDiv">
-                        @for(t <- topics) {
-                            <li><topic text=@t.name></topic> <a class="deleteTopic" ng-click="chat.deleteTopic('@t.name', $event)"> [delete] </a></li>
-                        }
-
-                        <ul id="topics" class="topics" ng-repeat="topic in chat.topics track by $index">
-                            <li><topic text={{topic}}></topic><a class="deleteTopic"> [delete] </a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h2>Participants</h2>
-                        <span ng-repeat="user in chat.topicParticipants">
-                            <div class="L">
-                                <a>
-                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrEyVlaWx0_FK_sz86j-CnUC_pfEqw_Xq_xZUm5CMIyEI_-X2hRUpx1BHL"/>
-                                    <div class="tooltip">{{user}}</div>
-                                </a>
-                            </div>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="mainContainer">
-                    <div class="container">
-                        <div class="Area">
-                            <div ng-repeat="msg in chat.messages track by $index">
-                                <div ng-attr-id="{{'first'+msg.id}}" ng-if="msg.username" class="{{msg.firstClass}} L">
-                                    <a>
-                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrEyVlaWx0_FK_sz86j-CnUC_pfEqw_Xq_xZUm5CMIyEI_-X2hRUpx1BHL"/>
-                                        <div class="tooltip">{{msg.username}}</div>
-                                    </a>
-                                </div>
-                                <div ng-attr-id="{{'second'+msg.id}}" class="text R textR" ng-if="msg.username">[@{
-                                    currentTime
-                                }] {{msg.data}}</div>
-                                <div ng-if="!msg.username" class="infoMessage">{{msg.data}}</div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="formDiv">
-                        <form>
-                            <textarea placeholder="Enter message..."
-                            ng-model="chat.currentMessage"></textarea>
-                            <input type="submit" value="Send"
-                            ng-click="chat.sendMessage()">
-                        </form>
-                    </div>
+                    Logged in as @user —
+                    <a href="@routes.Application.index()" ng-click="chat.disconnect()">Disconnect</a>
                 </div>
             </div>
-        } else {
-            <div class="loginDiv">
-                <form action="@routes.Application.joinChat(null, "Conversation")" >
-                    <div> <input id="username" name="username" type="text" placeholder="Enter name..."></div>
-                    <div> <input type='file' accept="image/*" onchange="loadFile(event)"/></div>
-                    <div><img id="logo" src="#" alt="your avatar" /></div>
-                    <script>
-                            var loadFile = function(event) {
-                                var output = document.getElementById('logo');
-                                var url = URL.createObjectURL(event.target.files[0]);
-                                output.src = url;
-                            };
-                    </script>
-                    <input type="submit" value="Send" />
-                </form>
-            </div>
-        }
+            <div class="topicsContainer">
+                <div class="topicForm">
+                    <h2>Available topics:</h2>
+                    <form id="topicform" >
+                        <input id="topicName" ng-model="chat.newTopic" type="text" class="form-control " placeholder="Enter topic...">
 
+                        <input id="createTopicButton" type="submit" value="Create" ng-click="chat.createTopic()"/>
+                    </form>
+                </div>
+                <div class="topicsDiv">
+                    @for(t <- topics) {
+                        <li><topic text=@t.name></topic> <a class="deleteTopic" ng-click="chat.deleteTopic('@t.name', $event)"> [delete] </a></li>
+                    }
+
+                    <ul id="topics" class="topics" ng-repeat="topic in chat.topics track by $index">
+                        <li><topic text={{topic}}></topic><a class="deleteTopic"> [delete] </a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Participants</h2>
+                    <span ng-repeat="user in chat.topicParticipants">
+                        <div class="L">
+                            <a>
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrEyVlaWx0_FK_sz86j-CnUC_pfEqw_Xq_xZUm5CMIyEI_-X2hRUpx1BHL"/>
+                                <div class="tooltip">{{user}}</div>
+                            </a>
+                        </div>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mainContainer">
+                <div class="container">
+                    <div class="Area" ng-repeat="msg in chat.messages track by $index">
+                        <div ng-attr-id="{{'first'+msg.id}}" ng-if="msg.username" class="{{msg.firstClass}} L">
+                            <a>
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrEyVlaWx0_FK_sz86j-CnUC_pfEqw_Xq_xZUm5CMIyEI_-X2hRUpx1BHL"/>
+                                <div class="tooltip">{{msg.username}}</div>
+                            </a>
+                        </div>
+                        <div ng-attr-id="{{'second'+msg.id}}" class="text R textR" ng-if="msg.username">[@{
+                            currentTime
+                        }] {{msg.data}}</div>
+                        <div ng-if="!msg.username" class="infoMessage">{{msg.data}}</div>
+                    </div>
+                </div>
+
+
+                <div class="formDiv">
+                    <form>
+                        <textarea placeholder="Enter message..."
+                        ng-model="chat.currentMessage"></textarea>
+                        <input type="submit" value="Send"
+                        ng-click="chat.sendMessage()">
+                    </form>
+                </div>
+            </div>
+        </div>
+    } else {
+        <div class="loginDiv">
+            <form action="@routes.Application.joinChat(null, "Conversation")" >
+                <div> <input id="username" name="username" type="text" placeholder="Enter name..."></div>
+                <div> <input type='file' accept="image/*" onchange="loadFile(event)"/></div>
+                <div><img id="logo" src="#" alt="your avatar" /></div>
+                <script>
+                        var loadFile = function(event) {
+                            var output = document.getElementById('logo');
+                            var url = URL.createObjectURL(event.target.files[0]);
+                            output.src = url;
+                        };
+                </script>
+                <input type="submit" value="Send" />
+            </form>
         </div>
     }
+
+    </div>
+}
 
