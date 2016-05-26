@@ -1,19 +1,9 @@
 @(user: String, topic: String, topics: Seq[domain.Topic], oldMessages: Seq[domain.Message])
 
-@currentTime = @{
-    import java.util.Calendar
-    import java.text.SimpleDateFormat
-
-    val today = Calendar.getInstance.getTime
-    val curTimeFormat = new SimpleDateFormat("HH:mm:ss")
-
-    curTimeFormat.format(today)
-}
-
 @main("Chat app") {
     <div ng-app="ChatApp" xmlns="http://www.w3.org/1999/html">
     @if(user != null) {
-        <div ng-controller="ChatController as chat" ng-init="username = '@{user}'; topic = '@{topic}'; @for(m <- oldMessages){putMessage('@m.text', '@m.user.name', '@m.date');}">
+        <div ng-controller="ChatController as chat" ng-init="username = '@{user}'; topic = '@{topic}'; @for(m <- oldMessages){putMessage('@m.text', '@m.user.name', '@m.date.format("EE MM hh:mm:ss")');}">
             <div class="header">
                 <div>
                     <div class="topicNameDiv" ng-show="'@{
@@ -68,9 +58,7 @@
                                 <div class="tooltip">{{msg.username}}</div>
                             </a>
                         </div>
-                        <div ng-attr-id="{{'second'+msg.id}}" class="text R textR" ng-if="msg.username">[@{
-                            currentTime
-                        }] {{msg.data}}</div>
+                        <div ng-attr-id="{{'second'+msg.id}}" class="text R textR" ng-if="msg.username">[{{msg.date}}] {{msg.data}}</div>
                         <div ng-if="!msg.username" class="infoMessage">{{msg.data}}</div>
                     </div>
                 </div>

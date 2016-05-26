@@ -109,6 +109,11 @@ angular.module("ChatApp", [])
             return classToAdd
         }
 
+        chat.currentTime = function() {
+            var today = new Date()
+            return today
+        }
+
         chat.messages = [];
         chat.userTopics = [];
         chat.topics = [];
@@ -128,6 +133,7 @@ angular.module("ChatApp", [])
             var msg = {
                 "type": messages.message,
                 "username": chat.username,
+                "date": chat.currentTime(),
                 "data": chat.currentMessage,
                 "topic": chat.topic,
                 "id": $scope.guid()
