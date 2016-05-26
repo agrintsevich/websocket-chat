@@ -62,16 +62,14 @@ body {
 
 .mainContainer {
     margin-left: 40%;
-    width: 60%;
-
+    width: 80%;
 }
 
 .topicsContainer {
     width: 30%;
     float: left;
     margin-left: 20px;
-    height: 500px;
-
+    height: 100%;
 }
 
 .topicForm {
@@ -79,7 +77,7 @@ body {
 }
 
 .topicsDiv {
-    height: 300px;
+    height: 90%;
     min-height: 300px;
     overflow-y: scroll;
     margin: 5px;
@@ -104,24 +102,6 @@ body {
     height: 400px;
     overflow-y: scroll;
     border: 1px solid #ccc;
-}
-
-.container::-webkit-scrollbar {
-    width: 3px;
-    max-width: 3px;
-    height: auto;
-    max-height: 8px;
-}
-
-.container::-webkit-scrollbar-thumb {
-    background: #f0f0f0;
-    border-radius: 5px;
-    max-width: 3px;
-}
-
-.container::-webkit-scrollbar-track {
-    background: #9F6905;
-    border-radius: 5px;
 }
 
 .Area {

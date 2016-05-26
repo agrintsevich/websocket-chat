@@ -1,26 +1,30 @@
 @(user: String, topic: String, topics: Seq[domain.Topic], oldMessages: Seq[domain.Message])
 
+@currentTime = @{
+    import java.util.Calendar
+    import java.text.SimpleDateFormat
+    val today = Calendar.getInstance.getTime
+    val curTimeFormat = new SimpleDateFormat("dd.MM hh:mm:ss")
+    curTimeFormat.format(today)
+}
+
 @main("Chat app") {
     <div ng-app="ChatApp" xmlns="http://www.w3.org/1999/html">
     @if(user != null) {
-        <div ng-controller="ChatController as chat" ng-init="username = '@{user}'; topic = '@{topic}'; @for(m <- oldMessages){putMessage('@m.text', '@m.user.name', '@m.date.format("EE MM hh:mm:ss")');}">
+        <div ng-controller="ChatController as chat" ng-init="username = '@{
+            user
+        }'; topic = '@{
+            topic
+        }'; @for(m <- oldMessages) {putMessage('@m.text', '@m.user.name', '@m.date.format("dd.MM hh:mm:ss")');}">
             <div class="header">
                 <div>
-                    <div class="topicNameDiv" ng-show="'@{
-                        topic
-                    }'">Current topic: @topic
-                        <a ng-show="'@{
-                            topic
-                        }'" ng-click="chat.leave()">[Leave]</a>
-                    </div>
-
                     Logged in as @user —
                     <a href="@routes.Application.index()" ng-click="chat.disconnect()">Disconnect</a>
                 </div>
             </div>
             <div class="topicsContainer">
                 <div class="topicForm">
-                    <h2>Available topics:</h2>
+                    <h2>All rooms:</h2>
                     <form id="topicform" >
                         <input id="topicName" ng-model="chat.newTopic" type="text" class="form-control " placeholder="Enter topic...">
 
@@ -37,7 +41,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h2>Participants</h2>
+                    <h2>People</h2>
                     <span ng-repeat="user in chat.topicParticipants">
                         <div class="L">
                             <a>

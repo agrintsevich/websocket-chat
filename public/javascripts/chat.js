@@ -238,7 +238,6 @@ angular.module("ChatApp", [])
                         ngCtrl.goToTopic(topicName)
                     })
                 })
-
             }
         };
     });
