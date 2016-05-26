@@ -21,7 +21,6 @@ class Chat extends Actor {
       subscribers.foreach {
         _ ! ClientJoinedChat(sender)
       }
-
       context become process(subscribers + sender)
     }
 
@@ -33,7 +32,6 @@ class Chat extends Actor {
     }
 
     case msg: ClientSentMessage => {
-
       val topic = domainService.createTopic(msg.text)
       val user = domainService.createUser(msg.text)
 
@@ -62,6 +60,6 @@ class Chat extends Actor {
     }
 
     case topic: ClientCreatedTopic =>
-      (subscribers).foreach( _ ! topic)
+      (subscribers).foreach(_ ! topic)
   }
 }

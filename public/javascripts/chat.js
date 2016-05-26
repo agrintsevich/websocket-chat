@@ -133,12 +133,12 @@ angular.module("ChatApp", [])
             var msg = {
                 "type": messages.message,
                 "username": chat.username,
-                "date": chat.currentTime(),
                 "data": chat.currentMessage,
                 "topic": chat.topic,
                 "id": $scope.guid()
             }
             chat.messages.push(msg);
+            msg["date"] = chat.currentTime(),
             chat.currentMessage = "";
             $scope.ws.send(JSON.stringify(msg));
         };
