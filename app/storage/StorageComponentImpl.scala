@@ -27,7 +27,7 @@ trait StorageComponentImpl extends StorageComponent with Logging {
         text -> message.text,
         dateCreated -> message.date,
         topicName -> message.topic,
-        user -> message.user
+        user -> userToDbObj(message.user)
         )
       context.messagesCollection += builder.result()
     }
@@ -190,14 +190,14 @@ trait StorageComponentImpl extends StorageComponent with Logging {
     }
 
     private def constructDomainMsq(message: Imports.DBObject): Message = {
+      println("LOAD MESSAGE: "+message)
+
       val messageText = message.getAs[String](text).getOrElse(default)
       val date = message.getAs[Date](dateCreated).getOrElse(new Date)
       val topic = message.getAs[String](topicName).getOrElse(default)
-      val user = userToDomain(message.getAs[DBObject](username).getOrElse(DBObject.empty))
-      new Message(messageText, date, user, getTopicByName(topic))
+      val user_ = userToDomain(message.getAs[DBObject](user).getOrElse(DBObject.empty))
+      new Message(messageText, date, user_, getTopicByName(topic))
     }
-
-
   }
 
 }
