@@ -145,7 +145,7 @@ trait StorageComponentImpl extends StorageComponent with Logging {
 
        return new User(name, userTopics)
       } else {
-        new User("", Seq.empty[Topic])
+        new User("Bot", Seq.empty[Topic])
       }
     }
 

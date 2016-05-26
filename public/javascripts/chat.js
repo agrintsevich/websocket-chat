@@ -6,8 +6,8 @@ angular.module("ChatApp", [])
     .controller("ChatController", function ($scope, $compile, $window, $document) {
 
         var chat = this;
-
         chat.topic = ""
+        chat.oldMessages=[]
 
         $scope.$watch("username", function () {
             chat.username = $scope.username;
@@ -114,11 +114,9 @@ angular.module("ChatApp", [])
         chat.topicParticipants = []
         chat.newTopic = "";
 
-        chat.putMessage = function(text, user, date) {
-            console.log(text+" "+user+" "+date)
+        $scope.putMessage = function(text, user, date) {
             var tMsg = {"username": user, "data": text, "date":date}
            chat.messages.push(tMsg)
-
         }
 
         chat.sendMessage = function () {

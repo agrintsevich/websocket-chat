@@ -13,12 +13,7 @@
 @main("Chat app") {
     <div ng-app="ChatApp" xmlns="http://www.w3.org/1999/html">
     @if(user != null) {
-
-        <div ng-controller="ChatController as chat" ng-init="username = '@{
-            user
-        }'; topic = '@{
-            topic
-        }'">
+        <div ng-controller="ChatController as chat" ng-init="username = '@{user}'; topic = '@{topic}'; @for(m <- oldMessages){putMessage('@m.text', '@m.user.name', '@m.date');}">
             <div class="header">
                 <div>
                     <div class="topicNameDiv" ng-show="'@{
@@ -108,7 +103,6 @@
             </form>
         </div>
     }
-
     </div>
 }
 
