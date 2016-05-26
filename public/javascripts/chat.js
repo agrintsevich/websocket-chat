@@ -7,7 +7,7 @@ angular.module("ChatApp", [])
 
         var chat = this;
         chat.topic = ""
-        chat.oldMessages=[]
+        chat.oldMessages = []
 
         $scope.$watch("username", function () {
             chat.username = $scope.username;
@@ -45,19 +45,7 @@ angular.module("ChatApp", [])
                         break;
                     case messages.message:
                         if (chat.topic == data.topic) {
-                            var classToAdd = "R"
-                            if (chat.messages.length) {
-                                if (chat.messages[chat.messages.length - 1].username == data.username) {
-
-                                    var lastId1 = '#first' + chat.messages[chat.messages.length - 1].id
-                                    classToAdd = getClassValue(lastId1, true, "R", "L", "R")
-                                } else {
-                                    classToAdd = getClassValue(lastId1, false, "R", "L", "L")
-                                }
-                            } else {
-                                classToAdd = "L"
-                            }
-                            data["firstClass"] = classToAdd
+                            data["firstClass"] = chat.getClassToAdd(data)
                             chat.messages.push(data);
                             chat.topicParticipants.push(data.username)
                         }
@@ -105,6 +93,22 @@ angular.module("ChatApp", [])
                     return firstClass
         }
 
+        chat.getClassToAdd = function (data) {
+            var classToAdd = "R"
+            if (chat.messages.length) {
+                if (chat.messages[chat.messages.length - 1].username == data.username) {
+
+                    var lastId1 = '#first' + chat.messages[chat.messages.length - 1].id
+                    classToAdd = getClassValue(lastId1, true, "R", "L", "R")
+                } else {
+                    classToAdd = getClassValue(lastId1, false, "R", "L", "L")
+                }
+            } else {
+                classToAdd = "L"
+            }
+            return classToAdd
+        }
+
         chat.messages = [];
         chat.userTopics = [];
         chat.topics = [];
@@ -114,9 +118,10 @@ angular.module("ChatApp", [])
         chat.topicParticipants = []
         chat.newTopic = "";
 
-        $scope.putMessage = function(text, user, date) {
-            var tMsg = {"username": user, "data": text, "date":date}
-           chat.messages.push(tMsg)
+        $scope.putMessage = function (text, user, date) {
+            var tMsg = {"username": user, "data": text, "date": date}
+            tMsg["firstClass"] = chat.getClassToAdd(tMsg)
+            chat.messages.push(tMsg)
         }
 
         chat.sendMessage = function () {

@@ -66,7 +66,6 @@ trait StorageComponentImpl extends StorageComponent with Logging {
               context.usersCollection.update(MongoDBObject(username->user.name), $set (topics->transformedToDbTopics))
             }
            }
-
         }
         case None => {}
       }
