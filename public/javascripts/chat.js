@@ -7,7 +7,6 @@ angular.module("ChatApp", [])
 
         var chat = this;
         chat.topic = ""
-        chat.oldMessages = []
 
         $scope.$watch("username", function () {
             chat.username = $scope.username;
@@ -31,9 +30,7 @@ angular.module("ChatApp", [])
 
         $scope.initWS = function (topic) {
             $scope.ws = new WebSocket("ws://localhost:9000/socket/" + topic);
-
             $scope.ws.onmessage = function (msg) {
-
                 var data = JSON.parse(msg.data)
                 switch (data.type) {
                     case messages.userJoinedChat:
@@ -121,6 +118,7 @@ angular.module("ChatApp", [])
             var tMsg = {"username": user, "data": text, "date": date}
             tMsg["firstClass"] = chat.getClassToAdd(tMsg)
             chat.messages.push(tMsg)
+            chat.topicParticipants.push(tMsg.username)
         }
 
         chat.sendMessage = function () {
@@ -172,6 +170,7 @@ angular.module("ChatApp", [])
             $scope.ws.send(JSON.stringify(msg));
 
         }
+
 
         this.goToTopic = function (topic) {
             $window.location.href = 'http://localhost:9000/joinChat?username=' + chat.username + '&topic=' + topic;

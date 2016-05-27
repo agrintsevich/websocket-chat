@@ -36,13 +36,13 @@
                         <li><topic text=@t.name></topic> <a class="deleteTopic" ng-click="chat.deleteTopic('@t.name', $event)"> [delete] </a></li>
                     }
 
-                    <ul id="topics" class="topics" ng-repeat="topic in chat.topics track by $index">
+                    <ul id="topics" class="topics" ng-repeat="topic in chat.topics.getUnique() track by $index">
                         <li><topic text={{topic}}></topic><a class="deleteTopic"> [delete] </a></li>
                     </ul>
                 </div>
                 <div>
                     <h2>People</h2>
-                    <span ng-repeat="user in chat.topicParticipants">
+                    <span ng-repeat="user in chat.topicParticipants.getUnique() track by $index">
                         <div class="L">
                             <a>
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrEyVlaWx0_FK_sz86j-CnUC_pfEqw_Xq_xZUm5CMIyEI_-X2hRUpx1BHL"/>
