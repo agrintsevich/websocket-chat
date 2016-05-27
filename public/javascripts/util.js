@@ -9,3 +9,18 @@ Array.prototype.getUnique = function () {
     }
     return a;
 }
+
+var getClassValue = function (elemId, sameAsPrev, firstClass, secondClass, checkClass) {
+    var elem = angular.element(document.querySelector(elemId));
+    if (sameAsPrev)
+        if (elem.hasClass(checkClass))
+            return firstClass;
+        else
+            return secondClass
+    if (!sameAsPrev)
+        if (elem.hasClass(checkClass))
+            return secondClass;
+        else
+            return firstClass
+}
+

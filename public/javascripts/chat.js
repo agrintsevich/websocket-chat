@@ -76,20 +76,6 @@ angular.module("ChatApp", [])
             }
         }
 
-        var getClassValue = function (elemId, sameAsPrev, firstClass, secondClass, checkClass) {
-            var elem = angular.element(document.querySelector(elemId));
-            if (sameAsPrev)
-                if (elem.hasClass(checkClass))
-                    return firstClass;
-                else
-                    return secondClass
-            if (!sameAsPrev)
-                if (elem.hasClass(checkClass))
-                    return secondClass;
-                else
-                    return firstClass
-        }
-
         chat.getClassToAdd = function (data) {
             var classToAdd = "R"
             if (chat.messages.length) {
