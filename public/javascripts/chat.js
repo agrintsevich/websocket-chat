@@ -28,6 +28,10 @@ angular.module("ChatApp", [])
                 s4() + '-' + s4() + s4() + s4();
         }
 
+        $(window).on('beforeunload', function(){
+             $scope.ws.close();
+        });
+
         $scope.initWS = function (topic) {
             $scope.ws = new WebSocket("ws://localhost:9000/socket/" + topic);
             $scope.ws.onmessage = function (msg) {
@@ -71,8 +75,9 @@ angular.module("ChatApp", [])
                 $scope.$digest();
             }
             $scope.ws.onopen = function () {
-                var msg = {"type": messages.userJoinedChat, "username": chat.username, "topic": chat.topic};
-                $scope.ws.send(JSON.stringify(msg))
+//                var msg = {"type": messages.userJoinedChat, "username": chat.username, "topic": chat.topic};
+//                console.log("WS onopen about to send msg: "+JSON.stringify(msg))
+//                $scope.ws.send(JSON.stringify(msg))
             }
         }
 
