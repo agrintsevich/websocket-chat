@@ -14,14 +14,16 @@ class Client(out: ActorRef, chat: ActorRef, topic: String) extends Actor {
     case text: JsValue =>
       chat ! ClientSentMessage(text)
 
-    case ClientSentMessage(text) =>
+    case ClientSentMessage(text) => {
       out ! text
+    }
 
     case ClientCreatedTopic(client, topic) => {
       out ! topic
     }
 
     case ClientJoinedChat(client) => {
+      println("Client joined chat: "+client)
       chat ! ClientJoinedChat(client)
     }
 

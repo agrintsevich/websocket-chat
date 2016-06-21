@@ -5,10 +5,10 @@ import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoClient
 
 class MongoContext(val config: MongoConfig) {
-  val mongoClient = MongoClient()
+  val mongoClient = MongoClient(config.host, config.port)
   val mongoDB = mongoClient(config.dbName)
 
-  implicit val options: DBObject = BasicDBObjectBuilder.start().add("capped", false).add("size", 2000000000l).get()
+  implicit val options: DBObject = BasicDBObjectBuilder.start().add("size", 2000000000l).get()
 
   def messagesCollection = getOrCreate(config.messages)
 

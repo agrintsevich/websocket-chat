@@ -37,9 +37,6 @@ class Application @Inject()(actorSystem: ActorSystem) extends Controller {
       val user = domainService.createUser(username)
       val topics = storage.getTopicsOfUser(user).toList
       val oldMessages = storage.getOldMessages(domainService.createTopic(topic)).toList
-      //TODO: get old messages
-      println(oldMessages)
-
       Ok(views.html.index(username, topic, topics, oldMessages))
     }
   }

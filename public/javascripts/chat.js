@@ -14,27 +14,15 @@ angular.module("ChatApp", [])
 
         $scope.$watch("topic", function () {
             chat.topic = $scope.topic;
-            $scope.initWS(chat.topic)
         });
 
-        $scope.guid = function () {
-            function s4() {
-                return Math.floor((1 + Math.random()) * 0x10000)
-                    .toString(16)
-                    .substring(1);
-            }
-
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-                s4() + '-' + s4() + s4() + s4();
+        $window.onload = function() {
+            chat.initWS(chat.topic)
         }
 
-        $(window).on('beforeunload', function(){
-             $scope.ws.close();
-        });
-
-        $scope.initWS = function (topic) {
-            $scope.ws = new WebSocket("ws://localhost:9000/socket/" + topic);
-            $scope.ws.onmessage = function (msg) {
+        chat.initWS = function (topic) {
+            chat.ws = new WebSocket("ws://localhost:9000/socket/" + topic);
+            chat.ws.onmessage = function (msg) {
                 var data = JSON.parse(msg.data)
                 switch (data.type) {
                     case messages.userJoinedChat:
@@ -54,9 +42,12 @@ angular.module("ChatApp", [])
                     case messages.topic:
                         if (chat.topic == data.topic) {
                             chat.topics.push(data)
+                            var tMsg = {"username": null, "data": data.username + " created topic '"+data.data+"'"}
+                            chat.messages.push(tMsg)
                         }
                         break;
                     case messages.userLeftChat:
+                    case messages.disconnected:
                         if (chat.topic == data.topic) {
                             var index = chat.topicParticipants.indexOf(data.username)
                             chat.topicParticipants.splice(index)
@@ -71,14 +62,14 @@ angular.module("ChatApp", [])
                         }
                         break
                 }
-                $scope.$apply();
+
                 $scope.$digest();
             }
-            $scope.ws.onopen = function () {
-//                var msg = {"type": messages.userJoinedChat, "username": chat.username, "topic": chat.topic};
-//                console.log("WS onopen about to send msg: "+JSON.stringify(msg))
-//                $scope.ws.send(JSON.stringify(msg))
-            }
+        }
+
+        chat.sendFirstMsg = function() {
+            var msg = {"type": messages.userJoinedChat, "username": chat.username, "topic": chat.topic};
+            chat.ws.send(JSON.stringify(msg))
         }
 
         chat.getClassToAdd = function (data) {
@@ -119,11 +110,11 @@ angular.module("ChatApp", [])
                 "date": new Date(),
                 "data": chat.currentMessage,
                 "topic": chat.topic,
-                "id": $scope.guid()
+                "id": guid()
             }
             chat.messages.push(msg);
             chat.currentMessage = "";
-            $scope.ws.send(JSON.stringify(msg));
+            chat.ws.send(JSON.stringify(msg));
         };
 
         chat.disconnect = function () {
@@ -131,9 +122,9 @@ angular.module("ChatApp", [])
                 "type": messages.disconnected,
                 "username": chat.username,
                 "topic": chat.topic,
-                "id": $scope.guid()
+                "id": guid()
             }
-            $scope.ws.send(JSON.stringify(msg));
+            chat.ws.send(JSON.stringify(msg));
         }
 
         chat.leave = function () {
@@ -141,24 +132,25 @@ angular.module("ChatApp", [])
                 "type": messages.userLeftChat,
                 "username": chat.username,
                 "topic": chat.topic,
-                "id": $scope.guid()
+                "id": guid()
             }
-            $scope.ws.send(JSON.stringify(msg));
+            chat.ws.send(JSON.stringify(msg));
             $window.location.href = 'http://localhost:9000/joinChat?username=' + chat.username
         }
 
-        chat.deleteTopic = function (topicName, e) {
-            var elem = angular.element(e.srcElement);
-            var parentEl = angular.element(elem[0].parentNode)
-            parentEl.remove()
+        chat.deleteTopic = function (topicName) {
+
+            chat.topics.splice(chat.topics.indexOf(topicName))
+            $scope.$digest
+
             var msg = {
                 "type": messages.deleteTopic,
                 "username": chat.username,
                 "topic": chat.topic,
                 "data": topicName,
-                "id": $scope.guid()
+                "id": guid()
             }
-            $scope.ws.send(JSON.stringify(msg));
+            chat.ws.send(JSON.stringify(msg));
 
         }
 
@@ -173,24 +165,25 @@ angular.module("ChatApp", [])
                 "username": chat.username,
                 "topic": chat.topic,
                 "data": topic,
-                "id": $scope.guid()
+                "id": guid()
             }
-            if (typeof $scope.ws !== 'undefined')
-                $scope.ws.send(JSON.stringify(msg));
+            if (typeof chat.ws !== 'undefined')
+                chat.ws.send(JSON.stringify(msg));
         }
 
         chat.createTopic = function () {
 
             var topic = chat.newTopic.replace(/ /g, "\u00A0")
             chat.topics.push(topic)
+
             var msg = {
                 "type": messages.topic,
                 "data": topic,
                 "username": chat.username,
                 "topic": chat.topic,
-                "id": $scope.guid()
+                "id": guid()
             }
-            $scope.ws.send(JSON.stringify(msg))
+            chat.ws.send(JSON.stringify(msg))
             chat.newTopic = "";
         }
 

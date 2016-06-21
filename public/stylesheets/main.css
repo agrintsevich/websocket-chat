@@ -61,17 +61,16 @@ body {
 }
 
 .mainContainer {
-    margin-left: 40%;
-    width: 60%;
 
+    float:right;
+    width: 65%;
 }
 
 .topicsContainer {
-    width: 30%;
+    width: 32%;
     float: left;
     margin-left: 20px;
     height: 500px;
-
 }
 
 .topicForm {

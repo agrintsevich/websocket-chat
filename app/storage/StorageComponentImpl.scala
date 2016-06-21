@@ -189,8 +189,6 @@ trait StorageComponentImpl extends StorageComponent with Logging {
     }
 
     private def constructDomainMsq(message: Imports.DBObject): Message = {
-      println("LOAD MESSAGE: "+message)
-
       val messageText = message.getAs[String](text).getOrElse(default)
       val date = message.getAs[Date](dateCreated).getOrElse(new Date)
       val topic = message.getAs[String](topicName).getOrElse(default)
@@ -198,5 +196,4 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       new Message(messageText, date, user_, getTopicByName(topic))
     }
   }
-
 }

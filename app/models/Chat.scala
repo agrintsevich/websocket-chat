@@ -1,12 +1,9 @@
 package models
 
 import akka.actor._
-
-import Messages._
-import domain.MessageType._
-import storage.{StorageService, MongoConfig, MongoContext, StorageComponentImpl}
-import domain.{DomainService}
-import domain.MessageType
+import domain.{DomainService, MessageType}
+import models.Messages._
+import storage.StorageService
 
 class Chat extends Actor {
 
@@ -32,6 +29,7 @@ class Chat extends Actor {
     }
 
     case msg: ClientSentMessage => {
+
       val topic = domainService.createTopic(msg.text)
       val user = domainService.createUser(msg.text)
 
@@ -40,7 +38,9 @@ class Chat extends Actor {
           storage.addUser(user)
           storage.joinTopic(user, topic)
         }
-        case MessageType.message => storage.addMessage(domainService.createMessage(msg.text))
+        case MessageType.message => {
+          storage.addMessage(domainService.createMessage(msg.text))
+        }
         case MessageType.topic => {
           storage.addTopic(topic)
         }
