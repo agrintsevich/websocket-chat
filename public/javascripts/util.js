@@ -79,4 +79,3 @@ var contains = function(needle) {
 
     return indexOf.call(this, needle) > -1;
 };
-

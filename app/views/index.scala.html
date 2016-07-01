@@ -10,13 +10,13 @@
 
 @main("Chat app") {
     <div ng-app="ChatApp" xmlns="http://www.w3.org/1999/html">
-    @if(user != null) {
-        <div ng-controller="ChatController as chat" ng-init="username = '@{user}'; topic = '@{topic}'; @for(m <- oldMessages){putMessage('@m.text', '@m.user.name', '@m.date.format("dd.MM hh:mm:ss")');}@for(t <- topics){pushTopic({'name':'@t._1.name', 'count':'@t._2'});}">
+    <div ng-controller="ChatController as chat" ng-init="username = '@{user}'; topic = '@{topic}'; @for(m <- oldMessages){putMessage('@m.text', '@m.user.name', '@m.date.format("dd.MM hh:mm:ss")');}@for(t <- topics){pushTopic({'name':'@t._1.name', 'count':'@t._2'});}">
+        @if(user != null) {
             <div class="header">
-                <div>
+                <div class="logo"><img data-ng-src="{{chat.getAvatar()}}"/></div>
                     Logged in as @user —
-                    <a href="@routes.Application.index()" ng-click="chat.disconnect()">Disconnect</a>
-                </div>
+                <a href="@routes.Application.index()" ng-click="chat.disconnect()">Disconnect</a>
+
             </div>
             <div class="topicsContainer">
                 <div class="topicForm">
@@ -70,11 +70,11 @@
             </div>
         </div>
     } else {
-        <div class="loginDiv">
+        <div class="loginDiv" ng-controller="LoginController as login">
             <form action="@routes.Application.joinChat(null, "Conversation")" >
                 <div> <input id="username" name="username" type="text" placeholder="Enter name..."></div>
-                <div> <input type='file' accept="image/*" onchange="loadFile(event)"/></div>
-                <div><img id="logo" src="#" alt="your avatar" /></div>
+                <input type="file" fileread="avatar" onchange="loadFile(event)" />
+                <div><img id="logo" src="#" alt="your avatar" id="avatar" name="avatar"/></div>
                 <script>
                         var loadFile = function(event) {
                             var output = document.getElementById('logo');

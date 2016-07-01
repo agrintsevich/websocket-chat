@@ -42,6 +42,10 @@ body {
 
 }
 
+.logo {
+    float:left; margin: 1px;"
+}
+
 .header {
     padding-right: 10px;
     padding-left: 10px;
@@ -51,9 +55,8 @@ body {
     color: #9F6905;
     font-weight: lighter;
     background-color: #f0f0f0;
-    height: 50px;
+    height: 60px;
     line-height: 50px;
-    border-bottom: 1px solid #9F6905;
 }
 
 .header p {
@@ -61,15 +64,14 @@ body {
 }
 
 .mainContainer {
-
     float:right;
-    width: 65%;
+    width: 60%;
 }
 
 .topicsContainer {
-    width: 32%;
+    width: 30%;
     float: left;
-    margin-left: 20px;
+    margin-left: 5px;
     height: 500px;
 }
 

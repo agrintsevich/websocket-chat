@@ -5,5 +5,6 @@ var messages = {
     userLeftChat: "userLeftChat",
     disconnected: "disconnected",
     deleteTopic: "deleteTopic",
-    subscribeTopic: "subscribeTopic"
+    subscribeTopic: "subscribeTopic",
+    setAvatar: "setAvatar"
 }
