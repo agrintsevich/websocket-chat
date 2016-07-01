@@ -138,6 +138,11 @@ angular.module("ChatApp", [])
             $window.location.href = 'http://localhost:9000/joinChat?username=' + chat.username
         }
 
+         $scope.pushTopic = function(topic) {
+            if ($.inArray(topic, chat.topics) == -1)
+              chat.topics.push(topic)
+        }
+
         chat.deleteTopic = function (topicName) {
 
             chat.topics.splice(chat.topics.indexOf(topicName))
@@ -153,7 +158,6 @@ angular.module("ChatApp", [])
             chat.ws.send(JSON.stringify(msg));
 
         }
-
 
         this.goToTopic = function (topic) {
             $window.location.href = 'http://localhost:9000/joinChat?username=' + chat.username + '&topic=' + topic;
@@ -172,9 +176,8 @@ angular.module("ChatApp", [])
         }
 
         chat.createTopic = function () {
-
             var topic = chat.newTopic.replace(/ /g, "\u00A0")
-            chat.topics.push(topic)
+            chat.topics.push({"name": topic, "count": 0})
 
             var msg = {
                 "type": messages.topic,
@@ -212,7 +215,6 @@ angular.module("ChatApp", [])
             template: "<span class='topic'> {{getTopicName(getTopicName(text))}} <a class='subscribeTopic' id='subscribeTopic'> [subscribe] </a></span>",
             link: function (scope, elem, attrs, ngCtrl) {
                 var topicName = scope.getTopicName(scope.text)
-
                 elem.on("click", function () {
                     ngCtrl.subscribeToTopic(topicName)
                     elem.html("<span class='topicSubscripedLi'><a class='subscribedTopicHref'>" + topicName + "<a/></span>")

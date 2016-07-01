@@ -1,4 +1,4 @@
-@(user: String, topic: String, topics: Seq[domain.Topic], oldMessages: Seq[domain.Message])
+@(user: String, topic: String, topics: Seq[(domain.Topic, Long)], oldMessages: Seq[domain.Message])
 
 @currentTime = @{
     import java.util.Calendar
@@ -11,11 +11,7 @@
 @main("Chat app") {
     <div ng-app="ChatApp" xmlns="http://www.w3.org/1999/html">
     @if(user != null) {
-        <div ng-controller="ChatController as chat" ng-init="username = '@{
-            user
-        }'; topic = '@{
-            topic
-        }'; @for(m <- oldMessages) {putMessage('@m.text', '@m.user.name', '@m.date.format("dd.MM hh:mm:ss")');}">
+        <div ng-controller="ChatController as chat" ng-init="username = '@{user}'; topic = '@{topic}'; @for(m <- oldMessages){putMessage('@m.text', '@m.user.name', '@m.date.format("dd.MM hh:mm:ss")');}@for(t <- topics){pushTopic({'name':'@t._1.name', 'count':'@t._2'});}">
             <div class="header">
                 <div>
                     Logged in as @user —
@@ -32,13 +28,10 @@
                     </form>
                 </div>
                 <div class="topicsDiv">
-                    @for(t <- topics) {
-                        <li><topic text=@t.name></topic> <a class="deleteTopic" ng-click="chat.deleteTopic('@t.name', $event)"> [delete] </a></li>
-                    }
+                    <div id="topics"  ng-repeat="topic in chat.topics">
+                        <div><a class="newMsgs">{{topic["count"]}}</a><topic text={{topic["name"]}}></topic><a class="deleteTopic"> [delete] </a></div>
+                    </div>
 
-                    <ul id="topics" class="topics" ng-repeat="topic in chat.topics.getUnique() track by $index">
-                        <li><topic text={{topic}}></topic><a class="deleteTopic"> [delete] </a></li>
-                    </ul>
                 </div>
                 <div>
                     <h2>People</h2>

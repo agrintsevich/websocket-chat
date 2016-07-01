@@ -389,5 +389,14 @@ textarea:focus {
     font-size: 16px;
     color: darkred;
 }
-
+.newMsgs {
+    color: blue;
+    font-size: 12px;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    background-image: -moz-radial-gradient(60px 60px 45deg, circle cover, yellow 0%, orange 100%, red 95%);
+    background-image: -webkit-radial-gradient(60px 60px, circle cover, yellow, orange);
+    background-image: radial-gradient(60px 60px 45deg, circle cover, yellow 0%, orange 100%, red 95%);
+}
 

@@ -71,19 +71,14 @@ trait StorageComponentImpl extends StorageComponent with Logging {
       }
     }
 
-    def getTopicsOfUser(user: User): Seq[Topic] = {
+    def getTopicsOfUser(user: User, signInDate: Date): Seq[(Topic, Long)] = {
       val topicsCreatedBy = getTopics(MongoDBObject(createdBy -> user.name))
       val dbUser = getUserByName(user.name)
-      val topicsSeq =
+      val topics =
         for {
           topic_ <- topicsCreatedBy
-        } yield topicToDomain(topic_)
-
-
-      if (dbUser.isDefined) {
-        return topicsSeq.toSeq ++ dbUser.get.topics
-      }
-      return topicsSeq.toSeq
+        } yield (topicToDomain(topic_) -> getTopicUnreadMsgCount(topicToDomain(topic_), signInDate))
+      return topics
     }
 
     def addTopic(topic: Topic) = {
@@ -118,6 +113,11 @@ trait StorageComponentImpl extends StorageComponent with Logging {
         }
       }
 
+    }
+
+    def getTopicUnreadMsgCount(topic: Topic, signInDate: Date): Long = {
+      val q = (topicName $eq topic.name) ++  (dateCreated $lt signInDate)
+      context.messagesCollection.find(q).count()
     }
 
     private def updateUser(old: User, newUser: User) = {

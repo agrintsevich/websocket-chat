@@ -33,10 +33,14 @@ class Application @Inject()(actorSystem: ActorSystem) extends Controller {
         "error" -> "Please choose a valid username."
       )
     } else {
+      val signInDate = new java.util.Date()
+
       storage.addUser(domainService.createUser(username))
       val user = domainService.createUser(username)
-      val topics = storage.getTopicsOfUser(user).toList
+      val topics = storage.getTopicsOfUser(user, signInDate)
+
       val oldMessages = storage.getOldMessages(domainService.createTopic(topic)).toList
+
       Ok(views.html.index(username, topic, topics, oldMessages))
     }
   }
@@ -53,6 +57,6 @@ class Application @Inject()(actorSystem: ActorSystem) extends Controller {
   }
 
   def index = Action {
-    Ok(views.html.index(null, "Conversation", Seq.empty[domain.Topic], Seq.empty[domain.Message]))
+    Ok(views.html.index(null, "Conversation", Seq.empty[(domain.Topic,Long)], Seq.empty[domain.Message]))
   }
 }
